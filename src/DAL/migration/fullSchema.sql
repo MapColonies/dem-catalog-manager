@@ -17,16 +17,14 @@ CREATE TABLE public.records
     anytext_tsvector tsvector,
     links text COLLATE pg_catalog."default" NOT NULL,
 
+    imaging_sortie_accuracy_cep_90 numeric,
     resolution_meter numeric NOT NULL,
-    coverage_id text COLLATE pg_catalog."default" NOT NULL,
     height_range_from numeric NOT NULL,
     height_range_to numeric NOT NULL,
-    vertical_datum text COLLATE pg_catalog."default" NOT NULL,
-    units text COLLATE pg_catalog."default",
     geographic_area text COLLATE pg_catalog."default",
     undulation_model text COLLATE pg_catalog."default" NOT NULL,
     data_type text COLLATE pg_catalog."default" NOT NULL,
-    no_data_value text COLLATE pg_catalog."default" NOT NULL,
+    no_data_value numeric NOT NULL,
     resolution_degree numeric,
     layer_polygon_parts text COLLATE pg_catalog."default",
     absolute_accuracy_lep_90 numeric NOT NULL,
@@ -50,8 +48,10 @@ CREATE TABLE public.records
     footprint_geojson text COLLATE pg_catalog."default" NOT NULL,
     keywords text COLLATE pg_catalog."default",
 
+    product_status text COLLATE pg_catalog."default" NOT NULL DEFAULT 'UNPUBLISHED',
+    has_terrain boolean NOT NULL DEFAULT FALSE,
+
     CONSTRAINT records_pkey PRIMARY KEY (identifier),
-    CONSTRAINT unique_record_values UNIQUE (coverage_id)
 );
 
 
@@ -97,6 +97,12 @@ CREATE INDEX ix_resolution_meter
      ON public.records USING btree
      (resolution_meter ASC NULLS LAST);
 
+-- Index: ix_imaging_sortie_accuracy_cep_90
+-- DROP INDEX IF EXISTS public.ix_imaging_sortie_accuracy_cep_90;
+CREATE INDEX ix_imaging_sortie_accuracy_cep_90
+     ON public.records USING btree
+     (imaging_sortie_accuracy_cep_90 ASC NULLS LAST);
+
 -- Index: ix_max_srs_id
 -- DROP INDEX IF EXISTS public.ix_srs_id;
 CREATE INDEX ix_max_srs_id
@@ -108,6 +114,18 @@ CREATE INDEX ix_max_srs_id
 CREATE INDEX ix_classification
     ON public.records USING btree
     (classification COLLATE pg_catalog."default" ASC NULLS LAST);
+
+-- Index: ix_product_status
+-- DROP INDEX IF EXISTS public.ix_product_status;
+CREATE INDEX ix_product_status
+    ON public.records USING btree
+    (product_status COLLATE pg_catalog."default" ASC NULLS LAST);
+
+-- Index: ix_has_terrain
+-- DROP INDEX IF EXISTS public.ix_has_terrain;
+CREATE INDEX ix_has_terrain
+    ON public.records USING btree
+    (has_terrain ASC NULLS LAST);
 
 -- Index: records_wkb_geometry_idx
 -- DROP INDEX IF EXISTS public.records_wkb_geometry_idx;
