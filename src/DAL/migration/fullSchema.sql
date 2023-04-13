@@ -24,7 +24,7 @@ CREATE TABLE public.records
     geographic_area text COLLATE pg_catalog."default",
     undulation_model text COLLATE pg_catalog."default" NOT NULL,
     data_type text COLLATE pg_catalog."default" NOT NULL,
-    no_data_value numeric NOT NULL,
+    no_data_value text COLLATE pg_catalog."default" NOT NULL,
     resolution_degree numeric,
     layer_polygon_parts text COLLATE pg_catalog."default",
     absolute_accuracy_lep_90 numeric NOT NULL,
