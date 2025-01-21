@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS postgis;
 
--- Table: public.records
+
 -- DROP TABLE public.records;
 
 CREATE TABLE public.records (
@@ -49,86 +49,75 @@ CREATE TABLE public.records (
     no_data_value text DEFAULT '-999'::text NOT NULL
 );
 
+ALTER TABLE ONLY public.records
+    ADD CONSTRAINT records_pkey PRIMARY KEY (identifier);
 
--- Index: ix_product_id
+
 -- DROP INDEX IF EXISTS public.ix_product_id;
 CREATE INDEX ix_product_id
      ON public.records USING btree
      (product_id COLLATE pg_catalog."default" ASC NULLS LAST);
 
--- -- Index: ix_product_name
 -- DROP INDEX IF EXISTS public.ix_product_name;
 CREATE INDEX ix_product_name
     ON public.records USING btree
     (product_name COLLATE pg_catalog."default" ASC NULLS LAST);
 
--- Index: ix_product_type
 -- DROP INDEX IF EXISTS public.ix_product_type;
 CREATE INDEX ix_product_type
     ON public.records USING btree
     (product_type COLLATE pg_catalog."default" ASC NULLS LAST);
 
--- Index: ix_update_date
 -- DROP INDEX IF EXISTS public.ix_update_date;
 CREATE INDEX ix_update_date
     ON public.records USING btree
     (update_date ASC NULLS LAST);
 
--- Index: ix_source_start_date
 -- DROP INDEX IF EXISTS public.ix_source_start_date;
 CREATE INDEX ix_source_start_date
     ON public.records USING btree
     (source_start_date ASC NULLS LAST);
 
--- Index: ix_source_end_date
 -- DROP INDEX IF EXISTS public.ix_source_end_date;
 CREATE INDEX ix_source_end_date
      ON public.records USING btree
      (source_end_date ASC NULLS LAST);
 
--- Index: ix_resolution_meter
 -- DROP INDEX IF EXISTS public.ix_resolution_meter;
 CREATE INDEX ix_resolution_meter
      ON public.records USING btree
      (resolution_meter ASC NULLS LAST);
 
--- Index: ix_imaging_sortie_accuracy_cep_90
 -- DROP INDEX IF EXISTS public.ix_imaging_sortie_accuracy_cep_90;
 CREATE INDEX ix_imaging_sortie_accuracy_cep_90
      ON public.records USING btree
      (imaging_sortie_accuracy_cep_90 ASC NULLS LAST);
 
--- Index: ix_max_srs_id
 -- DROP INDEX IF EXISTS public.ix_srs_id;
 CREATE INDEX ix_max_srs_id
     ON public.records USING btree
     (srs COLLATE pg_catalog."default" ASC NULLS LAST);
 
--- Index: ix_classification
 -- DROP INDEX IF EXISTS public.ix_classification;
 CREATE INDEX ix_classification
     ON public.records USING btree
     (classification COLLATE pg_catalog."default" ASC NULLS LAST);
 
--- Index: ix_product_status
 -- DROP INDEX IF EXISTS public.ix_product_status;
 CREATE INDEX ix_product_status
     ON public.records USING btree
     (product_status COLLATE pg_catalog."default" ASC NULLS LAST);
 
--- Index: ix_has_terrain
 -- DROP INDEX IF EXISTS public.ix_has_terrain;
 CREATE INDEX ix_has_terrain
     ON public.records USING btree
     (has_terrain ASC NULLS LAST);
 
--- Index: records_wkb_geometry_idx
 -- DROP INDEX IF EXISTS public.records_wkb_geometry_idx;
 CREATE INDEX records_wkb_geometry_idx
     ON public.records USING gist
     (wkb_geometry);
 
--- Index: fts_gin_idx
 -- DROP INDEX IF EXISTS public.fts_gin_idx;
 -- DO NOT CHANGE THIS INDEX NAME --
 -- changing its name will disable pycsw full text index
@@ -136,7 +125,8 @@ CREATE INDEX fts_gin_idx
     ON public.records USING gin
     (anytext_tsvector);
 
--- Trigger function : records_update_anytext
+
+-- Trigger function: records_update_anytext
 -- DROP FUNCTION IF EXISTS public.records_update_anytext;
 CREATE FUNCTION public.records_update_anytext() RETURNS trigger
     LANGUAGE plpgsql
@@ -186,7 +176,7 @@ CREATE TRIGGER ftsupdate
       OR NEW.keywords IS NOT NULL)
 	 EXECUTE PROCEDURE records_update_anytext();
 
--- Trigger function : records_update_geometry
+-- Trigger function: records_update_geometry
 -- DROP FUNCTION IF EXISTS public.records_update_geometry;
 CREATE FUNCTION public.records_update_geometry() RETURNS trigger
     LANGUAGE plpgsql
